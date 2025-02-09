@@ -1,2 +1,37 @@
+<style>
+    .movie-img {
+        width: 300px;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .movie-container {
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+</style>
+
 <h1>Welcome to the Movie Reviews App</h1>
 <h1>This is the home page by <span style="color: rgb(0, 114, 152)">{{ name }}</span></h1>
+
+<form action="">
+    <div class="mb-3">
+        <label class="form-label">Search for Movie:</label>
+        <input type="text" name="searchMovie" class="form-control" value="{{ searchTerm }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<div class="container">
+    {% for movie in movies %}
+        <div class="movie-container">
+            <h2>{{ movie.title }}</h2>
+            <p>{{ movie.description }}</p>
+            {% if movie.image %}
+                <img class="movie-img" src="{{ movie.image.url }}" alt="{{ movie.title }}">
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
