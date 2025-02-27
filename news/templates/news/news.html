@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Latest News - Movie Reviews{% endblock %}
+
+{% block hero %}
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">Movie News</h1>
+        <p class="lead">Stay updated with the latest movie news and announcements</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            {% for news_item in news %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ news_item.headline }}</h3>
+                        <p class="card-text">{{ news_item.body }}</p>
+                        <p class="text-muted"><small>Published on: {{ news_item.date_added|date:"F d, Y" }}</small></p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-info">
+                    No news articles available at the moment.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
