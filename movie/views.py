@@ -6,6 +6,7 @@ matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import io
 import base64
+from collections import Counter
 
 def home(request):
     search_term = request.GET.get('searchMovie')
@@ -58,3 +59,51 @@ def statistics_view(request):
     
     # Render the statistics.html template with the chart
     return render(request, 'statistics.html', {'graphic': graphic})
+
+def genre_statistics_view(request):
+    # Get all movies
+    all_movies = Movie.objects.all()
+    
+    # Count movies by genre
+    genre_counts = Counter()
+    for movie in all_movies:
+        # Get the first genre (before any comma if multiple genres)
+        genre = movie.genre.split(',')[0].strip() if movie.genre else 'Unspecified'
+        genre_counts[genre] += 1
+    
+    # Sort genres by count in descending order
+    sorted_genres = dict(sorted(genre_counts.items(), key=lambda x: x[1], reverse=True))
+    
+    # Create the bar chart
+    plt.figure(figsize=(12, 6))
+    plt.bar(range(len(sorted_genres)), sorted_genres.values(), align='center')
+    
+    # Customize the chart
+    plt.title('Movies by Genre', fontsize=14, pad=20)
+    plt.xlabel('Genre', fontsize=12)
+    plt.ylabel('Number of Movies', fontsize=12)
+    plt.xticks(range(len(sorted_genres)), sorted_genres.keys(), rotation=45, ha='right')
+    
+    # Add value labels on top of each bar
+    for i, v in enumerate(sorted_genres.values()):
+        plt.text(i, v, str(v), ha='center', va='bottom')
+    
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout()
+    
+    # Save the chart to a BytesIO object
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', dpi=300, bbox_inches='tight')
+    buffer.seek(0)
+    plt.close()
+    
+    # Convert the chart to base64
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png).decode('utf-8')
+    
+    # Render the genre_statistics.html template with the chart
+    return render(request, 'genre_statistics.html', {
+        'graphic': graphic,
+        'genre_data': sorted_genres
+    })

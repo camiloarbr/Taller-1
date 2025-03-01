@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Genre Statistics - Movie Reviews{% endblock %}
+
+{% block hero %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container hero-content text-center">
+        <h1 class="display-4 mb-3 fw-bold">Movies by Genre</h1>
+        <p class="lead">Explore our movie collection distribution across different genres</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Genre Distribution</h2>
+                    <div class="text-center">
+                        <img src="data:image/png;base64,{{ graphic }}" class="img-fluid" alt="Movies by Genre Statistics">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Genre Data Table -->
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Detailed Genre Breakdown</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Genre</th>
+                                    <th scope="col">Number of Movies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for genre, count in genre_data.items %}
+                                <tr>
+                                    <td>{{ genre }}</td>
+                                    <td>{{ count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5">
+                <a href="{% url 'home' %}" class="btn btn-primary btn-custom">
+                    <i class="fas fa-film me-2"></i>Back to Movies
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -267,6 +267,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if 'genre-statistics' in request.path %}active{% endif %}" href="{% url 'genre_statistics' %}">
+                            <i class="fas fa-film me-1"></i> Genres
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if 'news' in request.path %}active{% endif %}" href="{% url 'news' %}">
                             <i class="fas fa-newspaper me-1"></i> News
                         </a>
