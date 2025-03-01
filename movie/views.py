@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Movie
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.db import IntegrityError
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
@@ -15,6 +18,54 @@ def home(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        try:
+            user = User.objects.get(email=email)
+            user = authenticate(request, username=user.username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('home')
+            else:
+                return render(request, 'login.html', {'error': 'Invalid credentials'})
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'error': 'User not found'})
+            
+    return render(request, 'login.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        
+        if password1 != password2:
+            return render(request, 'register.html', {'error': 'Passwords do not match'})
+            
+        try:
+            # Create user with email as username
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password1,
+                first_name=name.split()[0],
+                last_name=' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
+            )
+            auth_login(request, user)
+            return redirect('home')
+        except IntegrityError:
+            return render(request, 'register.html', {'error': 'Email already registered'})
+            
+    return render(request, 'register.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 def statistics_view(request):
     # Get all movies
